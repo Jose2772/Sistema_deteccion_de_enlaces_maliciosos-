@@ -217,3 +217,5 @@ Sistema_deteccion_de_enlaces_maliciosos-/
 * **Isabella Serrano**
 
 * **Daymar Escalona**
+
+* **Luis Marin**
