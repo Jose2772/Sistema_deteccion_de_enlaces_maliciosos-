@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FJLDI Security Chacao | Detección de Enlaces Maliciosos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">
+          <h1>FJLDI Security <span class="chacao-accent">Chacao</span></h1>
+          <span class="badge-chacao">Comercio Exterior · Chacao</span>
+        </div>
+        <p class="brand-subtitle">Sistema de Detección Heurística de Enlaces en Correo Institucional</p>
+      </div>
+    </div>
+
+    <div class="status-pill">
+      <span class="pulse-dot"></span>
+      <span>Motor Heurístico Activo · v2.6</span>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN POR PESTAÑAS -->
+  <nav class="tabs-bar" role="tablist">
+    <button class="tab-btn active" data-tab="scanner" role="tab" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      Escáner de Enlaces y Correos
+    </button>
+    <button class="tab-btn" data-tab="history" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      Historial de Auditoría
+      <span class="tab-counter" id="historyCount">0</span>
+    </button>
+    <button class="tab-btn" data-tab="analytics" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Panel Estadístico y Reglas
+    </button>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
+    <!-- PESTAÑA 1: ESCÁNER -->
+    <section id="tab-scanner" class="tab-panel active">
+      <div class="scanner-grid">
+        <!-- Panel de entrada -->
+        <div class="card scanner-card">
+          <div class="laser-beam" id="laserBeam"></div>
+          <div class="card-header">
+            <h2>Inspección de Correo o URL</h2>
+            <span class="tag-info">Importación / Exportación</span>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="senderInput">Remitente Institucional (Opcional)</label>
+              <input type="text" id="senderInput" placeholder="ej. aduanas@seniat.gob.ve o billing@maersk-logistics.com" />
+            </div>
+            <div class="input-group">
+              <label for="deptInput">Departamento Destino</label>
+              <select id="deptInput">
+                <option value="Aduanas y Aranceles">Aduanas y Aranceles</option>
+                <option value="Logística y Navieras">Logística y Navieras</option>
+                <option value="Comercio Exterior / Export">Comercio Exterior / Export</option>
+                <option value="Finanzas y Divisas">Finanzas y Divisas</option>
+                <option value="Gerencia General">Gerencia General</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="urlInput">Enlace(s) o Cuerpo del Correo Electrónico</label>
+            <textarea id="urlInput" rows="5" placeholder="Pega aquí una URL sospechosa o el texto completo de un correo recibido (el sistema extraerá automáticamente todos los enlaces)..."></textarea>
+          </div>
+
+          <div class="examples-bar">
+            <span class="examples-label">Pruebas rápidas:</span>
+            <button type="button" class="chip-btn chip-safe" data-example="safe">Enlace Seguro (SENIAT)</button>
+            <button type="button" class="chip-btn chip-medium" data-example="medium">Riesgo Medio (Tracking)</button>
+            <button type="button" class="chip-btn chip-danger" data-example="danger">Phishing Aduanero (BL)</button>
+            <button type="button" class="chip-btn chip-multi" data-example="multi">Correo con Múltiples Enlaces</button>
+          </div>
+
+          <div class="actions-row">
+            <button type="button" class="btn-primary" id="scanBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              Analizar Ahora
+            </button>
+            <button type="button" class="btn-secondary" id="clearBtn">Limpiar</button>
+          </div>
+        </div>
+
+        <!-- Panel de resultados -->
+        <div class="card result-card" id="resultContainer">
+          <div class="empty-state" id="emptyResult">
+            <div class="radar-circle">
+              <div class="radar-sweep"></div>
+            </div>
+            <h3>En espera de análisis</h3>
+            <p>Ingresa un enlace o el contenido de un correo institucional para evaluar su nivel de riesgo mediante el motor heurístico de <strong>FJLDI Security Chacao</strong>.</p>
+          </div>
+
+          <div class="results-list hidden" id="resultsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 2: HISTORIAL -->
+    <section id="tab-history" class="tab-panel">
+      <div class="card">
+        <div class="history-toolbar">
+          <div class="filter-pills">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn filter-safe" data-filter="safe">Seguros</button>
+            <button class="filter-btn filter-medium" data-filter="medium">Seguridad Media</button>
+            <button class="filter-btn filter-danger" data-filter="danger">Peligrosos</button>
+          </div>
+
+          <div class="history-controls">
+            <input type="text" id="searchHistory" placeholder="Buscar por URL, dominio o remitente..." />
+            <button type="button" class="btn-outline" id="exportCsvBtn">Exportar CSV</button>
+            <button type="button" class="btn-outline" id="exportJsonBtn">Exportar JSON</button>
+            <button type="button" class="btn-danger-outline" id="clearHistoryBtn">Borrar Historial</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Fecha / Hora</th>
+                <th>Estado</th>
+                <th>URL / Dominio</th>
+                <th>Departamento</th>
+                <th>Puntuación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 3: PANEL ESTADÍSTICO Y REGLAS -->
+    <section id="tab-analytics" class="tab-panel">
+      <div class="kpi-grid">
+        <div class="card kpi-card">
+          <span class="kpi-label">Total Analizados</span>
+          <strong class="kpi-value" id="kpiTotal">0</strong>
+          <span class="kpi-sub">Enlaces auditados en plataforma</span>
+        </div>
+        <div class="card kpi-card kpi-safe">
+          <span class="kpi-label">Enlaces Seguros</span>
+          <strong class="kpi-value neon-safe" id="kpiSafe">0</strong>
+          <span class="kpi-sub">Tráfico institucional verificado</span>
+        </div>
+        <div class="card kpi-card kpi-medium">
+          <span class="kpi-label">Seguridad Media</span>
+          <strong class="kpi-value neon-medium" id="kpiMedium">0</strong>
+          <span class="kpi-sub">Requieren revisión preventiva</span>
+        </div>
+        <div class="card kpi-card kpi-danger">
+          <span class="kpi-label">Amenazas Bloqueadas</span>
+          <strong class="kpi-value neon-danger" id="kpiDanger">0</strong>
+          <span class="kpi-sub">Phishing / Malware aduanero</span>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="card">
+          <h3>Distribución de Riesgo</h3>
+          <div class="chart-box">
+            <svg viewBox="0 0 120 120" class="donut-svg" id="donutChart">
+              <circle cx="60" cy="60" r="46" fill="transparent" stroke="#1e293b" stroke-width="14"></circle>
+              <circle id="segSafe" cx="60" cy="60" r="46" fill="transparent" stroke="#39FF14" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)"></circle>
+              <circle id="segMedium" cx="60" cy="60" r="46" fill="transparent" stroke="#FF9E00" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)"></circle>
+              <circle id="segDanger" cx="60" cy="60" r="46" fill="transparent" stroke="#FF073A" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)"></circle>
+            </svg>
+            <div class="donut-legend">
+              <div><span class="dot-safe"></span> Seguros: <strong id="pctSafe">0%</strong></div>
+              <div><span class="dot-medium"></span> Riesgo Medio: <strong id="pctMedium">0%</strong></div>
+              <div><span class="dot-danger"></span> Peligrosos: <strong id="pctDanger">0%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Reglas Heurísticas Activas (Comercio Exterior)</h3>
+          <ul class="rules-list">
+            <li><strong>R1 · Typosquatting Aduanero:</strong> Detecta suplantación de SENIAT, Bolipuertos, Maersk, MSC, DHL y banca nacional.</li>
+            <li><strong>R2 · Ingeniería Social Logística:</strong> Evalúa términos de urgencia como <em>invoice, bill-of-lading, manifiesto, arancel</em>.</li>
+            <li><strong>R3 · Extensiones de Alto Riesgo:</strong> Penaliza TLDs frecuentes en campañas maliciosas (<code>.xyz, .top, .tk, .click, .zip</code>).</li>
+            <li><strong>R4 · Protocolo sin Cifrado:</strong> Advierte enlaces HTTP sin TLS/SSL en portales operativos.</li>
+            <li><strong>R5 · Ofuscación y Punycode:</strong> Identifica dominios homógrafos (<code>xn--</code>), direcciones IP directas o símbolo <code>@</code>.</li>
+            <li><strong>R6 · Archivos Ejecutables:</strong> Bloquea descargas directas <code>.exe, .scr, .bat, .iso, .vbs</code> camufladas como facturas.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL DE DETALLE FORENSE -->
+  <div class="modal-backdrop hidden" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Detalle Forense del Enlace</h3>
+        <button type="button" class="close-modal" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>FJLDI Security Chacao · Protección de Correo Corporativo para Empresas de Importación y Exportación · Municipio Chacao, Caracas</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
