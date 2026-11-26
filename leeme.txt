@@ -1,0 +1,130 @@
+================================================================================
+FJLDI SECURITY CHACAO — SISTEMA DE DETECCIÓN HEURÍSTICA DE ENLACES MALICIOSOS
+EN PLATAFORMAS DE CORREO INSTITUCIONAL (COMERCIO EXTERIOR — MUNICIPIO CHACAO)
+================================================================================
+
+Ubicación: Municipio Chacao, Estado Miranda.
+Asignatura: Desarrollo del Software — Evaluación (3er Corte).
+
+--------------------------------------------------------------------------------
+1. DESCRIPCIÓN DEL SISTEMA
+--------------------------------------------------------------------------------
+Plataforma web diseñada para analizar correos electrónicos y enlaces URL
+dirigidos a empresas de importación y exportación, evaluando indicadores de
+phishing aduanero/logístico mediante 6 reglas heurísticas (R1 a R6), lista
+blanca de dominios oficiales y registro de auditoría persistente.
+
+Tecnologías utilizadas:
+* Frontend: HTML5, CSS3, JavaScript (Vanilla / Fetch API).
+* Backend: Python 3.11+, FastAPI, Uvicorn.
+* Base de Datos: MySQL / MariaDB (PLATAFORMA_PHISHING) gestionada en XAMPP.
+
+--------------------------------------------------------------------------------
+2. ESTRUCTURA DEL REPOSITORIO
+--------------------------------------------------------------------------------
+Sistema_deteccion_de_enlaces_maliciosos-/
+├── leeme.txt
+├── README.md
+└── phishing-detector-chacao/
+    ├── database.sql          # Script SQL con las tablas y datos de prueba
+    ├── backend/              # API REST en FastAPI
+    │   ├── main.py           # Endpoints y lógica del servidor
+    │   ├── database.py       # Configuración de conexión a MySQL (XAMPP)
+    │   ├── analyzer.py       # Motor heurístico de análisis de URLs (R1-R6)
+    │   └── requirements.txt  # Dependencias de Python
+    └── frontend/             # Interfaz gráfica de usuario
+        ├── index.html        # Estructura principal de la interfaz web
+        ├── styles.css        # Hoja de estilos y diseño responsivo
+        └── app.js            # Lógica del cliente y conexión con la API
+
+--------------------------------------------------------------------------------
+3. GUÍA PASO A PASO PARA EJECUTAR Y CONECTAR EL SISTEMA
+--------------------------------------------------------------------------------
+
+PASO 1: Descargar el repositorio y visualizar el Frontend
+1. Descargue el proyecto desde GitHub haciendo clic en el botón verde
+   "<> Code" -> "Download ZIP" (o ejecute:
+   git clone https://github.com/Jose2772/Sistema_deteccion_de_enlaces_maliciosos-.git).
+2. Ingrese a la carpeta phishing-detector-chacao/frontend/ (donde se encuentran
+   index.html, styles.css y app.js) y abra el archivo index.html en su
+   navegador web (o ábralo con Live Server / python -m http.server 5500 en
+   http://127.0.0.1:5500).
+3. En este punto podrá explorar toda la interfaz visual del escáner, el
+   historial y el panel estadístico. Para activar el análisis heurístico real y
+   el guardado en base de datos, continúe con los Pasos 2 y 3.
+
+PASO 2: Montar la Base de Datos en XAMPP (phpMyAdmin)
+1. Abra el panel de control de XAMPP (XAMPP Control Panel).
+2. Haga clic en el botón "Start" del módulo Apache y en el botón "Start" del
+   módulo MySQL (ambos deben iluminarse en verde y mostrar el puerto 3306).
+3. Haga clic en el botón "Admin" ubicado al lado de MySQL (esto abrirá
+   automáticamente http://localhost/phpmyadmin en su navegador).
+4. En el panel izquierdo de phpMyAdmin, haga clic en "Nueva" (New).
+5. En el campo "Nombre de la base de datos", escriba exactamente:
+
+   PLATAFORMA_PHISHING
+
+   y haga clic en el botón "Crear".
+6. Con la base de datos PLATAFORMA_PHISHING seleccionada en el menú izquierdo,
+   haga clic en la pestaña superior "Importar" (Import).
+7. Presione "Seleccionar archivo" (Choose File), busque y seleccione el archivo
+   database.sql ubicado en phishing-detector-chacao/database.sql.
+8. Baje hasta el final de la página y haga clic en el botón "Importar" (Go).
+9. Verificación: En el panel izquierdo aparecerán creadas las tablas
+   departamentos, dominios_confiables y analisis_enlaces junto con los
+   registros iniciales de prueba.
+
+PASO 3: Conectar y Encender el Backend (FastAPI) con la Base de Datos de XAMPP
+Requisito: Tener instalado Python 3.11 o 3.12 y mantener encendido MySQL en XAMPP.
+
+1. Abra una terminal y ubíquese en la carpeta del servidor backend:
+   cd phishing-detector-chacao/backend
+
+2. Cree y active el entorno virtual de Python e instale las dependencias:
+   * En Windows:
+     python -m venv .venv
+     .venv\Scripts\activate
+     pip install -r requirements.txt
+
+   * En Linux / macOS:
+     python3 -m venv .venv
+     source .venv/bin/activate
+     pip install -r requirements.txt
+
+3. Para enlazar el backend con el servidor MySQL de XAMPP, cree un archivo
+   llamado .env dentro de phishing-detector-chacao/backend/ con los parámetros
+   por defecto de XAMPP (usuario root y contraseña vacía):
+
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=PLATAFORMA_PHISHING
+
+4. Inicie el servidor backend de FastAPI:
+   uvicorn main:app --reload
+
+   Al iniciar correctamente, la consola mostrará:
+   Uvicorn running on http://127.0.0.1:8000
+
+5. Verificación de conexión:
+   * Al abrir http://127.0.0.1:8000 en el navegador, la API responderá con el
+     estado operativo del motor heurístico.
+   * Al abrir http://127.0.0.1:8000/docs, se desplegará la documentación
+     interactiva (Swagger UI) conectada a PLATAFORMA_PHISHING.
+
+6. Regrese a la pestaña del Frontend en su navegador y recargue con F5. El
+   sistema quedará completamente conectado a la base de datos de XAMPP para
+   analizar enlaces, auditar correos y consultar estadísticas.
+
+--------------------------------------------------------------------------------
+4. INTEGRANTES DEL EQUIPO
+--------------------------------------------------------------------------------
+* **José Gerardo**
+
+* **Fabián García**
+
+* **Isabella Serrano**
+
+* **Daymar Escalona**
+===============================================================================
